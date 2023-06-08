@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+#include <stack>
+
+using namespace std;
+
+struct Edge {
+    int src;
+    int nbr;
+
+    Edge(int src, int nbr) {
+        this->src = src;
+        this->nbr = nbr;
+    }
+};
+
+void topological(vector<Edge>* graph, int src, vector<bool>& visited, stack<int>& st) {
+    visited[src] = true;
+    for (Edge& e : graph[src]) {
+        if (!visited[e.nbr]) {
+            topological(graph, e.nbr, visited, st);
+        }
+    }
+    st.push(src);
+}
+
+int main() {
+    int vtces;
+    cin >> vtces;
+
+    vector<Edge>* graph = new vector<Edge>[vtces];
+
+    int edges;
+    cin >> edges;
+
+    for (int i = 0; i < edges; i++) {
+        int v1, v2;
+        cin >> v1 >> v2;
+        graph[v1].push_back(Edge(v1, v2));
+    }
+
+    vector<bool> visited(vtces, false);
+    stack<int> st;
+
+    for (int v = 0; v < vtces; v++) {
+        if (!visited[v]) {
+            topological(graph, v, visited, st);
+        }
+    }
+
+    while (!st.empty()) {
+        cout << st.top() << endl;
+        st.pop();
+    }
+
+    delete[] graph;
+
+    return 0;
+}
